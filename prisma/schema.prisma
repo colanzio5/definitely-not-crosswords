@@ -1,0 +1,151 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // NOTE: You probably want to change this to another database later on
+  provider = "postgresql"
+
+  // This value is read from the .env file.
+  url = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String       @id @default(cuid())
+  name          String?
+  email         String?      @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  gameMember    GameMember[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum QuestionDirectionEnum {
+  DOWN
+  ACROSS
+}
+
+model Question {
+  id           String                @id @default(uuid())
+  number       Int
+  answer       String
+  questionText String
+  rootX        Int
+  rootY        Int
+  direction    QuestionDirectionEnum @default(DOWN)
+  gameId       String
+  game         Game                  @relation(fields: [gameId], references: [id], onDelete: Cascade)
+}
+
+model Game {
+  id        String          @id @default(uuid())
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  title     String
+  published Boolean         @default(false)
+  active    ActiveGame[]
+  completed CompletedGame[]
+  questions Question[]
+}
+
+model ActiveGame {
+  id          String        @id @default(uuid())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  actions     GameActions[]
+  gameId      String
+  game        Game          @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameMembers GameMember[]
+}
+
+model GameActions {
+  id           String     @id @default(uuid())
+  createdAt    DateTime   @default(now())
+  activeGameId String
+  activeGame   ActiveGame @relation(fields: [activeGameId], references: [id], onDelete: Cascade)
+}
+
+model CompletedGame {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  game        Game?        @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameId      String?
+  gameStats   GameStats[]
+  gameMembers GameMember[]
+}
+
+model GameStats {
+  id        String        @id @default(uuid())
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  gameId    String
+  game      CompletedGame @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  memberScores MemberScore[]
+}
+
+model GameMember {
+  id              String         @id @default(uuid())
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  userId          String
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isOwner         Boolean        @default(false)
+  activeGameId    String?
+  ActiveGame      ActiveGame?    @relation(fields: [activeGameId], references: [id], onDelete: Cascade)
+  completedGameId String?
+  CompletedGame   CompletedGame? @relation(fields: [completedGameId], references: [id], onDelete: Cascade)
+  MemberScore     MemberScore[]
+}
+
+model MemberScore {
+  id          String     @id @default(uuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  memberId    String
+  member      GameMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  gameStatsId String?
+  gameStats   GameStats? @relation(fields: [gameStatsId], references: [id], onDelete: Cascade)
+  score       Int        @default(0)
+}
