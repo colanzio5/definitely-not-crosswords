@@ -1,16 +1,15 @@
-<script lang="ts">
-import { vxm } from "@/store";
-import { Vue } from "vue-class-component";
+<script setup lang="ts">
+import { GameActions } from "@prisma/client"
 
-export default class ActionsList extends Vue {
-  get vxm() { return vxm }
-}
+defineProps({
+  actions: Array<GameActions>,
+})
+
 </script>
-
 <template>
   <div class="app-view-port h-min flex-grow overflow-y-scroll">
     <div
-      v-for="action in vxm.activeGame.actions"
+      v-for="action in actions"
       :key="action.id"
       class="text-xs app-view-port flex flex-row p-2"
     >

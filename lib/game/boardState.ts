@@ -1,11 +1,16 @@
-import { IBoardState } from '../../types/interfaces/IBoardState';
-import { ICoordinates } from '../../types/interfaces/ICoordinates';
-import { IGameAction } from '../../types/interfaces/IGameActions';
-import { Cell } from './cell';
+import { CCell, ICell } from "./cell";
+import { IGameAction } from "./gameAction";
+import { IQuestion } from "./question";
 
-import { IQuestion } from './question';
+export class ICoordinates {
+  x: number = 0
+  y: number = 0
 
-
+  public static IsEqual(a: ICoordinates, b: ICoordinates): boolean {
+    return (a.x === b.x) && (a.y == b.y);
+  }
+};
+export interface IBoardState extends Array<Array<ICell>> {};
 
 export class BoardState {
   static BoardStateFromActions(
@@ -20,12 +25,12 @@ export class BoardState {
       for(let xi = 0; xi < boardSize.x; xi++) {
         const coordinates = { x: xi, y: yi };
         const answerCell = answersCellMap.find(cell => ICoordinates.IsEqual(cell.coordinates, coordinates));
-        let boardCell: Cell;
-        if(!answerCell) boardCell = new Cell("NOT_DEFINED", coordinates);
+        let boardCell: ICell;
+        if(!answerCell) boardCell = new CCell("NOT_DEFINED", coordinates);
         else {
-          boardCell = new Cell(answerCell.correctState, coordinates);
+          boardCell = new CCell(answerCell.correctState, coordinates);
           boardCell.modifications = actions.filter((action) =>
-            ICoordinates.IsEqual(coordinates, action.coordinates)
+            ICoordinates.IsEqual(coordinates, { x: action.cordX, y: action.cordY })
           );
         }
         boardState[yi][xi] = boardCell;

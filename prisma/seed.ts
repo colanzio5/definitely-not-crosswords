@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { testGame01 } from "./seed/testGame01";
+import { testGame01,testGame01CreateArgs } from "./seed/testGame01";
 import { testGame02 } from "./seed/testGame02";
 
 const prisma = new PrismaClient();
@@ -11,6 +11,7 @@ async function main() {
   await prisma.completedGame.deleteMany();
   await prisma.gameMember.deleteMany();
   await prisma.gameStats.deleteMany();
+  await prisma.gameMember.deleteMany();
   await prisma.memberScore.deleteMany();
   await prisma.question.deleteMany();
 
@@ -23,25 +24,37 @@ async function main() {
   if (!testUser?.id) throw Error("test user not found");
 
   // create completed game
+  const game01 = await prisma.game.create(testGame01CreateArgs)
+  const gameMember = await prisma.gameMember.create({
+    data: {
+      isOwner: true,
+      user: { connect: { email: "colanzio5@gmail.com" } },
+    }
+  })
   await prisma.completedGame.create({
     data: {
       game: {
-        create: testGame01,
+        connect: { id: game01.id }
+      },
+      gameMembers: {
+        connect: { id: gameMember.id }
       },
       gameStats: {
         create: {
           memberScores: {
             create: {
               score: 10,
-              member: {
+              member: { 
                 create: {
                   isOwner: true,
-                  user: { connect: { email: "colanzio5@gmail.com" } },
-                },
-              },
-            },
-          },
-        },
+                  user: {
+                    connect: { id: testUser.id }
+                  }
+                } 
+              }
+            }
+          }
+        }
       },
     },
   });

@@ -1,1 +1,0 @@
-export interface IBoardState extends Array<Array<ICell>> {};

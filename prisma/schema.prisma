@@ -49,6 +49,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   gameMember    GameMember[]
+  GameAction    GameAction[]
 }
 
 model VerificationToken {
@@ -66,6 +67,7 @@ enum QuestionDirectionEnum {
 
 model Question {
   id           String                @id @default(uuid())
+  type         String                @default("Question")
   number       Int
   answer       String
   questionText String
@@ -78,6 +80,7 @@ model Question {
 
 model Game {
   id        String          @id @default(uuid())
+  type      String          @default("Game")
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
   title     String
@@ -88,59 +91,76 @@ model Game {
 }
 
 model ActiveGame {
-  id          String        @id @default(uuid())
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  actions     GameActions[]
+  id          String       @id @default(uuid())
+  type        String       @default("ActiveGame")
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  actions     GameAction[]
   gameId      String
-  game        Game          @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  game        Game         @relation(fields: [gameId], references: [id], onDelete: Cascade)
   gameMembers GameMember[]
 }
 
-model GameActions {
-  id           String     @id @default(uuid())
-  createdAt    DateTime   @default(now())
-  activeGameId String
-  activeGame   ActiveGame @relation(fields: [activeGameId], references: [id], onDelete: Cascade)
+model GameAction {
+  id            String             @id @default(uuid())
+  type          String             @default("GameActions")
+  submittedAt   DateTime           @default(now())
+  activeGameId  String
+  activeGame    ActiveGame         @relation(fields: [activeGameId], references: [id], onDelete: Cascade)
+  actionType    GameActionTypeEnum
+  submittedBy   User               @relation(fields: [userId], references: [id])
+  cordX         Int
+  cordY         Int
+  previousState String?
+  state         String?
+  userId        String
+}
+
+enum GameActionTypeEnum {
+  correctGuess
+  incorrectGuess
+  placeholder
 }
 
 model CompletedGame {
   id        String   @id @default(uuid())
+  type      String   @default("CompletedGame")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  game        Game?        @relation(fields: [gameId], references: [id], onDelete: Cascade)
-  gameId      String?
-  gameStats   GameStats[]
+  gameId String
+  game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameStatsId String
+  gameStats   GameStats @relation(fields: [gameStatsId], references: [id])
   gameMembers GameMember[]
 }
 
 model GameStats {
-  id        String        @id @default(uuid())
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  gameId    String
-  game      CompletedGame @relation(fields: [gameId], references: [id], onDelete: Cascade)
-
-  memberScores MemberScore[]
+  id            String          @id @default(uuid())
+  type          String          @default("GameStats")
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  memberScores  MemberScore[]
+  completedGame CompletedGame[]
 }
 
 model GameMember {
   id              String         @id @default(uuid())
+  type            String         @default("GameMember")
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
   userId          String
   user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   isOwner         Boolean        @default(false)
   activeGameId    String?
-  ActiveGame      ActiveGame?    @relation(fields: [activeGameId], references: [id], onDelete: Cascade)
+  activeGame      ActiveGame?    @relation(fields: [activeGameId], references: [id], onDelete: Cascade)
   completedGameId String?
-  CompletedGame   CompletedGame? @relation(fields: [completedGameId], references: [id], onDelete: Cascade)
-  MemberScore     MemberScore[]
+  completedGame   CompletedGame? @relation(fields: [completedGameId], references: [id], onDelete: Cascade)
+  memberScore     MemberScore[]
 }
 
 model MemberScore {
   id          String     @id @default(uuid())
+  type        String     @default("MemberScore")
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   memberId    String

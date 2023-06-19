@@ -1,10 +1,8 @@
-
-import { IGame } from '../../types/interfaces/IGame';
-import { GameStatusEnum } from '../../types/enums/GameStatusEnum';
-import { IQuestionDbo } from '../../types/dbos/IQuestionDbo';
-import { IGameAction } from '../../types/interfaces/IGameActions';
-import { QuestionFromDbo } from './question';
-import { GameToGameTemplate } from './game';
+import { addOrUpdateGameTemplateDbo } from '@app/services/firebase';
+import { Game, GameStatusEnum, IGame } from '@app/utils/game/game';
+import { generateUUID } from 'three/src/math/MathUtils';
+import { IQuestionDbo, Question } from './question';
+import { IGameAction } from './gameAction';
 
 export class GameFactory {
   private _game: IGame = {
@@ -23,7 +21,7 @@ export class GameFactory {
   }
 
   addQuestion(props: IQuestionDbo, actions: IGameAction[] = []) {
-    const question = QuestionFromDbo(props, actions);
+    const question = Question.FromDbo(props, actions);
     this._game.questions.push(question);
     return this;
   }
@@ -50,5 +48,5 @@ export class GameFactory {
   }
 
   saveToFirestore = () =>
-    addOrUpdateGameTemplateDbo(GameToGameTemplate(this._game));
+    addOrUpdateGameTemplateDbo(Game.ToGameTemplate(this._game));
 }

@@ -1,14 +1,20 @@
-<script setup lang="ts">
-const { data: user } = useAuth();
-const { $client } = useNuxtApp()
-
-const { data: activeGames } =await $client.activeGames.useQuery({ email: user.value?.user?.email });
-</script>
-
 <template>
   <div>
-    <pre>{{ user }}</pre>
-    ---
-    <pre v-if="user?.user?.email">{{ activeGames }}</pre>
+    <AppHeader />
+    <div v-if="user?.user" class="app-border mt-1 p-1 w-min">
+      <img :src="user?.user?.image" alt="" srcset="">
+      <h1>name: {{ user?.user?.name }}</h1>
+      <h1>email: {{ user?.user?.email }}</h1>
+    </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import AppHeader from '../components/AppHeader.vue';
+
+definePageMeta({ 
+  middleware: 'auth',
+})
+
+const { data: user } = useAuth()
+</script>

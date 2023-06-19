@@ -1,9 +1,13 @@
-import { ICellState } from "../../types/interfaces/ICell";
-import { ICell } from "../../types/interfaces/ICellState";
-import { ICoordinates } from "../../types/interfaces/ICoordinates";
-import { IGameAction } from "../../types/interfaces/IGameActions";
+import { ICoordinates } from './boardState';
+import { CGameAction, IGameAction } from './gameAction';
 
-export class Cell implements ICell {
+export type ICellState = string | null;
+export interface ICell {
+  modifications: IGameAction[];
+  correctState: ICellState;
+  coordinates: ICoordinates;
+}
+export class CCell implements ICell {
   modifications: IGameAction[] = []
   correctState: ICellState;
   coordinates: ICoordinates;
@@ -15,19 +19,19 @@ export class Cell implements ICell {
 
   get currentState(): ICellState {
     const latestModification = this.orderedModifications;
-    if (!latestModification?.state) return 'NOT_DEFINED';
+    if (!latestModification?.state) return null;
     return latestModification.state;
   }
 
   get isCorrect(): boolean {
-    if (this.correctState == 'NOT_DEFINED') return false;
+    if (this.correctState == null) return false;
     if (this.modifications.length == 0) return false;
     const latestModification = this.currentState;
-    if (latestModification == 'NOT_DEFINED') return false;
+    if (latestModification == null) return false;
     return latestModification === this.correctState;
   }
 
   get orderedModifications(): IGameAction {
-    return this.modifications.sort(GameAction.SortByDateDesc)[0];
+    return this.modifications.sort(CGameAction.SortByDateDesc)[0];
   }
 }
