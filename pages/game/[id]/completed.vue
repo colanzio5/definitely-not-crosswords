@@ -1,8 +1,8 @@
 <script setup lang="ts">
-const { data: user } = useAuth();
+const { data: user } = useAuth()
 const { $client } = useNuxtApp()
 
-const { data: activeGames } = await $client.activeGames.useQuery({ email: user.value?.user?.email });
+const { data: activeGames } = await $client.activeGames.useQuery({ email: user.value?.user?.email })
 </script>
 
 <template>

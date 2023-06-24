@@ -1,20 +1,24 @@
 <template>
-  <div>
-    <AppHeader />
-    <LoadingBar v-if="pending"/>
-    <div v-else class="w-screen h-screen flex flex-col md:flex-row overflow-hidden">
-      <GameBoard class="flex-shrink" />
-      <QuestionsList class="h-full w-full flex-grow" />
-      <!-- <QuestionsList class="overflow-y-scroll" :direction="'ACROSS'" /> -->
-      <!-- <GameActionsList class=""/> -->
+    <div class="flex-1 flex flex-row overflow-y-hidden">
+        <main class="flex-1 overflow-y-auto">
+            <LoadingBar v-if="activeGameLoading" />
+            <div v-else class="max-h-full flex flex-col flex-1">
+                <GameBoard class="flex-1 flex"/>
+                <QuestionsList class="flex flex-col flex-grow overflow-scroll" />
+            </div>
+        </main>
     </div>
-  </div>
+    <footer><QuestionDirectionFilterBar /></footer>
 </template>
 
+  
 <script setup lang="ts">
-const route = useRoute()
-const { $client } = useNuxtApp()
+import { storeToRefs } from 'pinia'
+import { useActiveGameStore } from '~/stores/activeGame'
 
-const { data: activeGame, pending } = await $client.getActiveGameById.useQuery({ id: route.params.id });
+const activeGameStore = useActiveGameStore()
+const { activeGameLoading } = storeToRefs(activeGameStore)
 
+await activeGameStore.load();
 </script>
+  

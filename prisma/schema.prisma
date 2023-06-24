@@ -111,8 +111,8 @@ model GameAction {
   submittedBy   User               @relation(fields: [userId], references: [id])
   cordX         Int
   cordY         Int
-  previousState String?
-  state         String?
+  previousState String
+  state         String
   userId        String
 }
 

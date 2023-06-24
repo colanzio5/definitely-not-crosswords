@@ -1,20 +1,23 @@
 <template>
   <div>
-    <AppHeader />
-    <div v-if="user?.user" class="app-border mt-1 p-1 w-min">
-      <img :src="user?.user?.image" alt="" srcset="">
-      <h1>name: {{ user?.user?.name }}</h1>
-      <h1>email: {{ user?.user?.email }}</h1>
+    <div class="app-border mt-1 p-1 w-min">
+      <img :src="image" alt="" srcset="">
+      <h1>name: {{ name }}</h1>
+      <h1>email: {{ email }}</h1>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import AppHeader from '../components/AppHeader.vue';
+import { storeToRefs } from 'pinia'
+import { useUserStore } from '~~/stores/user'
 
-definePageMeta({ 
-  middleware: 'auth',
+definePageMeta({
+  middleware: 'auth'
 })
 
-const { data: user } = useAuth()
+const { $client } = useNuxtApp()
+const userStore = useUserStore()
+const { image, name, email } = storeToRefs(userStore)
+
 </script>

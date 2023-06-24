@@ -1,37 +1,23 @@
-import { ICoordinates } from './boardState';
-import { CGameAction, IGameAction } from './gameAction';
+import { GameAction } from '@prisma/client';
 
-export type ICellState = string | null;
-export interface ICell {
-  modifications: IGameAction[];
-  correctState: ICellState;
-  coordinates: ICoordinates;
+export type CellState = string | '';
+export interface Cell {
+  modifications: GameAction[];
+  correctState: CellState;
+  cordX: number,
+  cordY: number
 }
-export class CCell implements ICell {
-  modifications: IGameAction[] = []
-  correctState: ICellState;
-  coordinates: ICoordinates;
 
-  constructor(correctState: ICellState, coordinates: ICoordinates) {
-    this.correctState = correctState;
-    this.coordinates = coordinates;
-  }
-
-  get currentState(): ICellState {
-    const latestModification = this.orderedModifications;
-    if (!latestModification?.state) return null;
-    return latestModification.state;
-  }
-
-  get isCorrect(): boolean {
-    if (this.correctState == null) return false;
-    if (this.modifications.length == 0) return false;
-    const latestModification = this.currentState;
-    if (latestModification == null) return false;
-    return latestModification === this.correctState;
-  }
-
-  get orderedModifications(): IGameAction {
-    return this.modifications.sort(CGameAction.SortByDateDesc)[0];
-  }
+export function GetCurrentCellState (cell: Cell): CellState {
+  if (!cell?.modifications[0]?.state) { return '' }
+  return cell.modifications[0].state
 }
+
+export function IsCellCorrect (cell: Cell): boolean {
+  if (cell.correctState == '') { return false }
+  if (cell.modifications.length == 0) { return false }
+  const latestModification = GetCurrentCellState(cell)
+  if (latestModification == '') { return false }
+  return latestModification === cell.correctState
+}
+

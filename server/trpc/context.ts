@@ -1,25 +1,17 @@
-import { PrismaClient } from "@prisma/client";
-import { inferAsyncReturnType } from "@trpc/server";
-import type { H3Event } from "h3";
-// import { usePrisma } from '@sidebase/nuxt-prisma'
-/**
- *
- * Creates context for an incoming request
- * @link https://trpc.io/docs/context
- */
-export async function createContext(event: H3Event) {
-  /**
-   * Add any trpc-request context here. E.g., you could add \`prisma\` like this if you've set it up:
-   * \`\`\`
-   * const prisma = usePrisma(event)
-   * return { prisma }
-   * \`\`\`
-   *
-   * You can import \`usePrisma\` like this: \`import { usePrisma } from '@sidebase/nuxt-prisma'\`
-   */
-  //   const prisma = usePrisma(event)
-  const prisma = new PrismaClient();
-  return { prisma };
+// import { inferAsyncReturnType } from '@trpc/server'
+// import { H3Event } from 'h3'
+
+import { PrismaClient } from '@prisma/client'
+import * as trpc from '@trpc/server'
+import { EventEmitter } from 'events';
+import { createClient } from 'redis'
+
+export const createContext = async () => {
+  const ee = new EventEmitter();
+  // const redis = createClient({ url: 'redis://127.0.0.1:6379' })
+  // const prisma = new PrismaClient()
+  const ctx = { ee }
+  return ctx;
 }
 
-export type Context = inferAsyncReturnType<typeof createContext>;
+export type Context = trpc.inferAsyncReturnType<typeof createContext>;

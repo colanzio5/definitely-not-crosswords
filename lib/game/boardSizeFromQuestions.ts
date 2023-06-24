@@ -2,21 +2,7 @@ import { Question } from '@prisma/client'
 import { ICoordinates } from './boardState'
 import { WithComputedProperties } from './question'
 
-export function GetActiveGameCellFromCoordinates (
-  cordX: number,
-  cordY: number,
-  questions: WithComputedProperties<Question>[]
-) {
-  const answer = questions
-    .flatMap(q => q.answerMap)
-    .find(a => a.cordX === cordX && a.cordY === cordY)
-  if (!answer) { throw new Error('could not find cell matching coordinates') }
-  return answer
-}
-
-export function GetGameBoardSize (
-  questions: WithComputedProperties<Question>[]
-): ICoordinates {
+export function GetBoardSize (questions: WithComputedProperties<Question>[]): ICoordinates {
   const boardSize = questions
     .flatMap(q => q.answerMap)
     .reduce(
