@@ -118,6 +118,9 @@ export const useActiveGameStore = defineStore("activeGame", () => {
         console.log("newActions");
         console.dir(newActions);
         actions.value = [...actions.value, ...newActions];
+        questions.value = data.game.questions.map((q: Question) =>
+          computeQuestionAnswerMap(q, actions.value)
+        );
       },
     });
 
@@ -125,6 +128,8 @@ export const useActiveGameStore = defineStore("activeGame", () => {
   }
 
   function unSelect() {
+    const isActionsModified = gameActionData.value.some((cell) => cell.state !== "");
+    if(selectedQuestion.value && isActionsModified) submitActions("placeholder", selectedQuestion.value);
     selectedQuestion.value = null;
     gameActionData.value = [];
   }
@@ -132,7 +137,7 @@ export const useActiveGameStore = defineStore("activeGame", () => {
   function filterDown() {
     if (selectedDirection.value === "DOWN") selectedDirection.value = null;
     else {
-      unSelect()
+      unSelect();
       selectedDirection.value = "DOWN";
     }
   }
@@ -140,7 +145,7 @@ export const useActiveGameStore = defineStore("activeGame", () => {
   function filterAcross() {
     if (selectedDirection.value === "ACROSS") selectedDirection.value = null;
     else {
-      unSelect()
+      unSelect();
       selectedDirection.value = "ACROSS";
     }
   }

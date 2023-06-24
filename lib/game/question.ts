@@ -1,4 +1,4 @@
-import { GameAction, Question, QuestionDirectionEnum } from '@prisma/client'
+import { Game, GameAction, Question, QuestionDirectionEnum } from '@prisma/client'
 import { ICoordinates } from './boardState'
 import { SortGameActionByDateDesc } from './gameAction'
 import { Cell } from './cell'

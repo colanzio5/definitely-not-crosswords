@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { GameAction, Question, QuestionDirectionEnum } from "@prisma/client";
+import { Question } from "@prisma/client";
 import { storeToRefs } from "pinia";
 import { useActiveGameStore } from "~/stores/activeGame";
+import { onClickOutside } from '@vueuse/core'
+import { OnClickOutside } from '@vueuse/components'
 
 const activeGameStore = useActiveGameStore();
-const { submitActions, selectQuestion, unSelect, filterDown, filterAcross } =
-  activeGameStore;
-const { selectedQuestion, filteredQuestions, gameActionData } =
-  storeToRefs(activeGameStore);
+const { submitActions, selectQuestion, unSelect } = activeGameStore;
+const { selectedQuestion, filteredQuestions, gameActionData } = storeToRefs(activeGameStore);
 
-const direction = ref("DOWN" as QuestionDirectionEnum);
 
 function isSelected(question: Question): boolean {
   if (!selectedQuestion?.value) return false;
@@ -27,6 +26,9 @@ function keyup(e: KeyboardEvent) {
     e.target?.parentElement?.nextSibling?.firstChild?.focus();
   }
 }
+
+// onClickOutside(target, (event) => console.log(event))
+
 </script>
 
 <template>
@@ -43,7 +45,7 @@ function keyup(e: KeyboardEvent) {
             </div>
             <div v-if="isSelected(question)" class="flex flex-row">
               <OnClickOutside @trigger="unSelect">
-                <input v-for="modification of gameActionData" class="box letter selected" v-model="modification.state"
+                <input v-for="modification of gameActionData" :class="'box letter selected'" v-model="modification.state"
                   type="text" maxlength="1" @keyup="keyup" />
                 <div class="w-full"></div>
                 <button class="app-button text-sm link" @click="submitActions('guess', question)">
@@ -52,23 +54,24 @@ function keyup(e: KeyboardEvent) {
               </OnClickOutside>
             </div>
             <div v-else class="flex flex-row">
-              <div v-for="cell in question.answerMap" class="box letter" @click="selectQuestion(question)">
-                {{ cell?.modifications?.at(0)?.state || "" }}
+              <div v-for="cell in question.answerMap"  @click="selectQuestion(question)">
+                <div v-if="!cell.modifications?.length" class="box letter bg-white">{{ "" }}</div>
+                <div v-else-if="cell.modifications[0].actionType === 'placeholder'" class="box letter bg-highlight-400">{{ cell?.modifications[0].state }}</div>
+                <div v-else-if="cell.modifications[0].actionType === 'incorrectGuess'" class="box letter bg-secondary-400">{{ cell?.modifications[0].state }}</div>
+                <div v-else-if="cell.modifications[0].actionType === 'correctGuess'" class="box letter bg-green-400">{{ cell?.modifications[0].state }}</div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
 <style>
-.direction-button {
-  @apply min-w-full m-1;
+.correct { 
+  @apply bg-green-200;
 }
-
 .box {
   @apply w-6 h-6 border text-center text-black;
 }
@@ -78,7 +81,7 @@ function keyup(e: KeyboardEvent) {
 }
 
 .letter {
-  @apply bg-white border-black;
+  @apply border-black;
 }
 
 .letter:hover {

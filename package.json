@@ -30,6 +30,7 @@
     "@pinia/nuxt": "^0.4.11",
     "@trpc/client": "^10.27.1",
     "@trpc/server": "^10.27.1",
+    "@vueuse/components": "^10.2.0",
     "trpc-nuxt": "^0.10.3",
     "websocket-polyfill": "^0.0.3",
     "ws": "^8.13.0",

@@ -24,12 +24,13 @@ function isSelected(cell: Cell): boolean {
 <template>
   <div class="flex flex-col">
     <div v-for="(cellRow, rowIndex) of boardState" :key="rowIndex" class="flex flex-row justify-center">
-      <div v-for="cell of cellRow" :key="cell.cordX">
+      <div v-for="cell of cellRow" :key="cell.cordX" @click="selectCoordinates(cell.cordX, cell.cordY)">
         <div v-if="!isLetter(cell)" class="box empty"></div>
-        <div v-else>
-          <div v-if="isSelected(cell)" class="box letter selected">{{ cell?.modifications?.at(0)?.state || "" }}</div>
-          <div v-else class="box letter" @click="selectCoordinates(cell.cordX, cell.cordY)">{{
-            cell?.modifications?.at(0)?.state || "" }}</div>
+        <div v-else>  
+          <div v-if="!cell.modifications?.length" class="box letter bg-white">{{ "" }}</div>
+          <div v-else-if="cell.modifications[0].actionType === 'placeholder'" class="box letter bg-highlight-400">{{ cell?.modifications[0].state }}</div>
+          <div v-else-if="cell.modifications[0].actionType === 'incorrectGuess'" class="box letter bg-secondary-400">{{ cell?.modifications[0].state }}</div>
+          <div v-else-if="cell.modifications[0].actionType === 'correctGuess'" class="box letter bg-green-400">{{ cell?.modifications[0].state }}</div>
         </div>
       </div>
     </div>
@@ -39,7 +40,7 @@ function isSelected(cell: Cell): boolean {
 
 
 
-<style>
+<style scoped>
 .box {
   @apply w-6 h-6 border text-center text-black;
 }
@@ -49,7 +50,7 @@ function isSelected(cell: Cell): boolean {
 }
 
 .letter {
-  @apply bg-white border-black;
+  @apply border-black;
 }
 
 .letter:hover {
