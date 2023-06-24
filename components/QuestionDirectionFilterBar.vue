@@ -1,10 +1,8 @@
 <template>
-    <div class="app-border text-lg flex flex-row">
-        <div :class="downStyle" @click="filterDown">
-            DOWN
-        </div>
+    <div class="flex flex-row">
+        <button :class="downStyle" @click="filterDown">down</button>
         <div class="w-full" />
-        <div :class="acrossStyle" @click="filterAcross">ACROSS</div>
+        <button :class="acrossStyle" @click="filterAcross">across</button>
     </div>
 </template>
 

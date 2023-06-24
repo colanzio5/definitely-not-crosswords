@@ -22,7 +22,7 @@ function isSelected(cell: Cell): boolean {
 </script>
 
 <template>
-  <div class="flex-col">
+  <div class="flex flex-col">
     <div v-for="(cellRow, rowIndex) of boardState" :key="rowIndex" class="flex flex-row justify-center">
       <div v-for="cell of cellRow" :key="cell.cordX">
         <div v-if="!isLetter(cell)" class="box empty"></div>

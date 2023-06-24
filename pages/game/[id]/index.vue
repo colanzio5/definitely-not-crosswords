@@ -3,8 +3,8 @@
         <main class="flex-1 overflow-y-auto">
             <LoadingBar v-if="activeGameLoading" />
             <div v-else class="max-h-full flex flex-col flex-1">
-                <GameBoard class="flex-1 flex"/>
-                <QuestionsList class="flex flex-col flex-grow overflow-scroll" />
+                <GameBoard class="flex-1 flex min-h-fit m-1"/>
+                <QuestionsList class="flex flex-col flex-grow overflow-scroll m-1" />
             </div>
         </main>
     </div>

@@ -1,17 +1,19 @@
 <template>
   <div class="app-border flex flex-col">
     <div class="w-full h-full flex-grow">
+      <!-- 
       <div class="app-border text-white flex flex-row">
-        <n-space>
-          <n-button type="primary"> unstarted </n-button>
-          <n-button type="info"> completed </n-button>
-          <n-button type="warning"> active </n-button>
-        </n-space>
+          todo: filters/searchbar  
+          <button class="app-button color-primary-500"> unstarted </button>
+          <button class="app-button color-secondary-500"> completed </button>
+          <button class="app-button color-highlight-500"> active </button> 
         <div class="flex-grow"></div>
         <div class="app-border w-content">
           <span>search: </span><input class="text-white bg-black" type="text" v-model="searchTerm" />
         </div>
       </div>
+      -->
+      
       <LoadingBar v-if="pending" />
       <div v-else v-for="game in games" :game="game" :gameType="game.type"
         class="app-border text-white hover:link w-full">
