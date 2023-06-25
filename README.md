@@ -70,11 +70,33 @@ npm run preview
 
 # todo(s)
 
+### general application
+- [ ] websocket channel per game room
+- [ ] restrict selection of question/cell when another gamemember has selected
+- [ ] ? chat
+- [ ] refactor grid cell into component
+- [ ] actions timeline
+- [ ] validate answers on server side (and don't send answer to client)
+
+### scrape
+- [ ] refactor scraper code into abstract class
+- [ ] setup cron that calls all scrapers on a specific basis
+- [ ] ensure scraper code is idempotent + add db columns for tracking game source
+- [ ] implement nyc scraper in generic class
+- [ ] verify sprite scraper code in a container
+- [ ] figure out how to store sprite in a postgress/prisma column
+- [ ] create db entry for sprite
+- [ ] refactor sprite scraper code to store in filestorage and use sprite db entry w/ linked filestorage url
+
 ### infrastructure
+- [ ] ? cluster setup code per environment
+- [ ] kustomization
 - [ ] k8s deployments + environments
-- [ ] correct environment setup
+- [ ] correct environments setup
+- [ ] logging/metrics k8s components
 - [ ] error logging
 - [ ] api logging
+- [ ] ci/cd pipeline
 - [ ] ? api tracing
 
 ### testing
