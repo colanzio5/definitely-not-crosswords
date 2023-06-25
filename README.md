@@ -20,8 +20,7 @@ this is a [sidebase cheviot](https://sidebase.io/) app created by running `npm c
 ## how to get going?
 
 this is a straight-forward setup with minimal templating and scaffolding. the options you selected during the sidebase cli setup are all here though. good places to continue reading are:
-- [the first steps documentation](https://sidebase.io/sidebase/usage)
-- [our discord](https://discord.gg/auc8ecegzx)
+- [sidebase website](https://sidebase.io/)
 
 some tasks you should probably do in the beginning are:
 - [ ] replace this generic readme with a more specific one
