@@ -2,10 +2,8 @@
 import {
   ActiveGame,
   GameAction,
-  GameActionTypeEnum,
   GameMember,
   Question,
-  QuestionDirectionEnum,
 } from "@prisma/client";
 import { Ref } from "nuxt/dist/app/compat/capi";
 import { defineStore, storeToRefs } from "pinia";
@@ -16,6 +14,7 @@ import {
   WithComputedProperties,
 } from "~/lib/game/question";
 import { useUserStore } from "./user";
+import { randomUUID } from "crypto";
 
 export const useActiveGameStore = defineStore("activeGame", () => {
   // state
@@ -33,7 +32,7 @@ export const useActiveGameStore = defineStore("activeGame", () => {
   const members = ref([] as GameMember[]);
   const actions = ref([] as GameAction[]);
   const selectedQuestion = ref({} as WithComputedProperties<Question> | null);
-  const selectedDirection = ref("ACROSS" as QuestionDirectionEnum | null);
+  const selectedDirection = ref("ACROSS" as ("ACROSS" | "DOWN") | null);
 
   // game action reactive state
   const gameActionData = ref([] as GameAction[]);
@@ -42,19 +41,19 @@ export const useActiveGameStore = defineStore("activeGame", () => {
   const acrossQuestions = computed(() =>
     questions.value.filter(
       (q: WithComputedProperties<Question>) =>
-        q.direction === QuestionDirectionEnum.ACROSS
+        q.direction === "ACROSS"
     )
   );
   const downQuestions = computed(() =>
     questions.value.filter(
       (q: WithComputedProperties<Question>) =>
-        q.direction === QuestionDirectionEnum.DOWN
+        q.direction === "DOWN"
     )
   );
   const filteredQuestions = computed((): WithComputedProperties<Question>[] => {
-    return selectedDirection.value == ("DOWN" as QuestionDirectionEnum)
+    return selectedDirection.value == ("DOWN")
       ? downQuestions.value
-      : selectedDirection.value == ("ACROSS" as QuestionDirectionEnum)
+      : selectedDirection.value == ("ACROSS")
       ? acrossQuestions.value
       : questions.value;
   });
@@ -71,6 +70,7 @@ export const useActiveGameStore = defineStore("activeGame", () => {
   // actions
   async function load() {
     const route = useRoute();
+    const activeGameId = route.params.id as string
     const { $client } = useNuxtApp();
     const data = await $client.activeGame.get.query({
       id: route.params.id as string,
@@ -85,15 +85,8 @@ export const useActiveGameStore = defineStore("activeGame", () => {
     activeGame.value.gameId = data.gameId;
     actions.value = data.actions.map((a) => {
       return {
-        id: a.id,
-        type: a.type,
-        activeGameId: a.activeGameId,
-        actionType: a.actionType,
-        cordX: a.cordX,
-        cordY: a.cordY,
-        previousState: a.previousState,
-        state: a.state,
-        userId: a.userId,
+        ...a,
+        activeGameId,
         submittedAt: new Date(a.submittedAt),
       };
     });
@@ -102,21 +95,16 @@ export const useActiveGameStore = defineStore("activeGame", () => {
     );
     members.value = data.gameMembers.map((gm) => {
       return {
-        activeGameId: gm.activeGameId,
+        ...gm,
+        activeGameId,
         completedGameId: gm.completedGameId,
         createdAt: new Date(gm.createdAt),
         updatedAt: new Date(gm.updatedAt),
-        id: gm.id,
-        isOwner: gm.isOwner,
-        type: gm.type,
-        userId: gm.userId,
       };
     });
     // init subscription to other user's actions
-    $client.activeGame.onAddActions.subscribe(undefined, {
+    $client.activeGame.onAddActions.subscribe({ activeGameId }, {
       onData(newActions: GameAction[]) {
-        console.log("newActions");
-        console.dir(newActions);
         actions.value = [...actions.value, ...newActions];
         questions.value = data.game.questions.map((q: Question) =>
           computeQuestionAnswerMap(q, actions.value)
@@ -169,7 +157,7 @@ export const useActiveGameStore = defineStore("activeGame", () => {
         type: "GameAction",
         submittedAt: new Date(),
         activeGameId: useRoute().params.id,
-        actionType: "placeholder" as GameActionTypeEnum,
+        actionType: "placeholder",
         cordX: cell.cordX,
         cordY: cell.cordY,
         previousState: cell?.modifications?.at(0)?.state || "",
@@ -190,17 +178,17 @@ export const useActiveGameStore = defineStore("activeGame", () => {
     if (actionType === "guess")
       gameActionData.value = gameActionData.value.map((a) => {
         a.actionType = checkIfCorrect(question, gameActionData.value)
-          ? ("correctGuess" as GameActionTypeEnum)
-          : ("incorrectGuess" as GameActionTypeEnum);
+          ? ("correctGuess")
+          : ("incorrectGuess");
         return a;
       });
     const { email } = storeToRefs(useUserStore());
     const route = useRoute();
     const { $client } = useNuxtApp();
     await $client.activeGame.addActions.mutate({
-      id: route.params.id as string,
+      activeGameId: route.params.id as string,
       userEmail: email.value as string,
-      actions: gameActionData.value,
+      actions: gameActionData.value
     });
   }
 

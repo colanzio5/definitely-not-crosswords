@@ -1,10 +1,8 @@
 // import { inferAsyncReturnType } from '@trpc/server'
 // import { H3Event } from 'h3'
 
-import { PrismaClient } from '@prisma/client'
-import * as trpc from '@trpc/server'
+import * as trpc from '@trpc/server';
 import { EventEmitter } from 'events';
-import { createClient } from 'redis'
 
 export const createContext = async () => {
   const ee = new EventEmitter();

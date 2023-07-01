@@ -1,5 +1,4 @@
-import themeColors from "./tailwind/colors.cjs";
-import { theme } from "./tailwind/tailwind-workspace-preset";
+import { hostname } from "os";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -13,7 +12,10 @@ export default defineNuxtConfig({
     '@vueuse/nuxt'
   ],
   runtimeConfig: {
-    version: '0.0.1',
+    apiSecret: 'supersecret', // can be overridden by NUXT_API_SECRET environment variable
+    public: {
+      version: '0.0.1',
+    }
   },
   typescript: {
     shim: false

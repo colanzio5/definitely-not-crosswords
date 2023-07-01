@@ -1,6 +1,6 @@
 import { Prisma, QuestionDirectionEnum } from "@prisma/client";
 import rawTemplate from "~/lib/scraper/nty/2011-06.04.json";
-import { INytTemplate } from "~~/lib/scraper/nty/nytScraper";
+import { INytTemplate } from "~/lib/scraper/nty/nytScraper";
 
 const GameFromJson = (json: INytTemplate) => {
   const template = json.body[0];

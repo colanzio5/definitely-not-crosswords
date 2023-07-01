@@ -1,4 +1,4 @@
-import { Prisma, QuestionDirectionEnum } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import rawTemplate from "~/lib/scraper/nty/2011-06.04.json";
 import { INytTemplate } from "~~/lib/scraper/nty/nytScraper";
 
@@ -8,8 +8,8 @@ const GameFromJson = (json: INytTemplate) => {
     return {
       direction:
         clue.direction === "Across"
-          ? QuestionDirectionEnum.ACROSS
-          : QuestionDirectionEnum.DOWN,
+          ? "ACROSS"
+          : "DOWN",
       answer: template.cells
         .filter((cell, index) => clue.cells.includes(index))
         .map((cell) => cell.answer)
@@ -22,7 +22,7 @@ const GameFromJson = (json: INytTemplate) => {
   });
 };
 
-export const testSprite01 = {
+export const testSprite02 = {
   title: "testGame02",
   questions: {
     createMany: {
@@ -31,5 +31,5 @@ export const testSprite01 = {
   },
 };
 export const testGame02PrismaArgs: Prisma.UserSpriteCreateArgs = {
-  data: testSprite01
+  data: testSprite02
 };

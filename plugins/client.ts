@@ -1,10 +1,10 @@
 import { createWSClient, wsLink } from '@trpc/client';
-import { createTRPCNuxtClient } from 'trpc-nuxt/client'
+import { createTRPCNuxtClient } from 'trpc-nuxt/client';
 import { AppRouter } from '~/server/trpc/router';
 
 export default defineNuxtPlugin(async () => {
   const wsClient = createWSClient({
-    url: `ws://localhost:3002`,
+    url: `ws://0.0.0.0:3002`,
     WebSocket: process.server ? (await import('ws').then(r => r.default || r)) : globalThis.WebSocket as any
   })
 

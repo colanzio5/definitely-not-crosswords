@@ -19,9 +19,6 @@ export class BoardState {
     actions: GameAction[],
     questions: WithComputedProperties<Question>[]
   ): IBoardState {
-    console.log("COMPUTING BOARD STATE");
-    console.log(actions);
-    // console.log(questions);
 
     const answersCellMap = questions.flatMap((q) => [...q.answerMap]);
     const boardState = new Array(boardSize.y);
@@ -53,7 +50,6 @@ export class BoardState {
         boardState[yi][xi] = boardCell;
       }
     }
-    console.log(boardState);
     return boardState;
   }
 }

@@ -12,9 +12,7 @@ const { selectedQuestion, filteredQuestions, gameActionData } = storeToRefs(acti
 
 function isSelected(question: Question): boolean {
   if (!selectedQuestion?.value) return false;
-  const isSelected = selectedQuestion.value.id === question.id;
-  if (isSelected) console.log(gameActionData?.value);
-  return isSelected;
+  return selectedQuestion.value.id === question.id;
 }
 
 function keyup(e: KeyboardEvent) {
@@ -26,8 +24,6 @@ function keyup(e: KeyboardEvent) {
     e.target?.parentElement?.nextSibling?.firstChild?.focus();
   }
 }
-
-// onClickOutside(target, (event) => console.log(event))
 
 </script>
 

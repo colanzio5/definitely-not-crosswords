@@ -12,12 +12,15 @@ function isLetter(cell: Cell): boolean {
   return cell.correctState !== ''
 }
 
-function isSelected(cell: Cell): boolean {
-  if (!selectedQuestion.value) return false
-  if (!selectedQuestion.value?.answerMap) return false;
-  return selectedQuestion.value.answerMap.some(c => c.cordX === cell.cordX && c.cordY === cell.cordY)
+function cellStyle(cell: Cell): string {
+  if (cell.correctState !== '') return "box empty"
+  if(cell.modifications[0].actionType === 'placeholder') return "box letter bg-highlight-400"
+  if(cell.modifications[0].actionType === 'incorrectGuess') return "box letter bg-secondary-400"
+  if(cell.modifications[0].actionType === 'correctGuess') return "box letter bg-green-400"
+  return "box letter bg-white"
 }
 
+function cellState(cell: Cell) { return cell?.modifications[0].state ?? ""; }
 
 </script>
 
@@ -25,19 +28,18 @@ function isSelected(cell: Cell): boolean {
   <div class="flex flex-col">
     <div v-for="(cellRow, rowIndex) of boardState" :key="rowIndex" class="flex flex-row justify-center">
       <div v-for="cell of cellRow" :key="cell.cordX" @click="selectCoordinates(cell.cordX, cell.cordY)">
-        <div v-if="!isLetter(cell)" class="box empty"></div>
+        <div :class="cellStyle(cell)">{{ cellState(cell) }}</div>
+        <!-- <div v-if="!isLetter(cell)" class="box empty"></div>
         <div v-else>  
-          <div v-if="!cell.modifications?.length" class="box letter bg-white">{{ "" }}</div>
+          <div v-if="!cell.modifications?.length" class="">{{ "" }}</div>
           <div v-else-if="cell.modifications[0].actionType === 'placeholder'" class="box letter bg-highlight-400">{{ cell?.modifications[0].state }}</div>
           <div v-else-if="cell.modifications[0].actionType === 'incorrectGuess'" class="box letter bg-secondary-400">{{ cell?.modifications[0].state }}</div>
           <div v-else-if="cell.modifications[0].actionType === 'correctGuess'" class="box letter bg-green-400">{{ cell?.modifications[0].state }}</div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
 </template>
-
-
 
 
 <style scoped>
